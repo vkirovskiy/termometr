@@ -1,4 +1,3 @@
-#define F_CPU 8000000L
 #define F_E	0
 #define F_RW	1
 #define F_RS	2
@@ -12,9 +11,6 @@
 #define	LCD_CLR		0
 #define LCD_DSP		3
 #define LCD_ON		2
-
-#include <avr/io.h>
-#include <util/delay.h>
 
 void init_ports(void) {
 	DATA_PORT &= 0xF0;

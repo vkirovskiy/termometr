@@ -5,7 +5,7 @@ TARGET=termometr
 PART=m16
 PROG=avr109
 USBPORT=/dev/ttyUSB0
-SOURCES=$(wildcard *.c)
+SOURCES=termometr.c
 OBJECTS=$(SOURCES:%.c=%.o)
 
 $(TARGET).hex : $(TARGET).o

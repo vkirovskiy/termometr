@@ -1,4 +1,4 @@
-#define F_CPU 8000000L
+#include "variables.c"
 #define DS_PORT		PORTA
 #define DS_DDR		DDRA
 #define DS_PIN		PINA
@@ -7,6 +7,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include "lcd.c"
 
 volatile unsigned char rom[3][8];
 volatile unsigned char dstemp[9];
