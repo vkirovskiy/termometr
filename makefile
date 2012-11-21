@@ -14,6 +14,9 @@ $(TARGET).hex : $(TARGET).o
 $(TARGET).o : $(SOURCES)
 	$(CC) $(CFLAGS) -o $(TARGET).o $(SOURCES)
 
+asm:
+	$(CC) $(CFLAGS) -S -o $(TARGET).s $(SOURCES)
+
 flash: 
 	avrdude -p $(PART) -c $(PROG) -P $(USBPORT) -U flash:w:$(TARGET).hex
 
