@@ -7,12 +7,14 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 #include "lcd.c"
 
 volatile unsigned char rom[3][8];
 volatile unsigned char dstemp[9];
 volatile unsigned char pa = 0;
 volatile unsigned char intc = 0;
+char EEMEM em = 0;
 char dsmessage[] PROGMEM = "SENSORS ";
 
 #define ds_pin_up()	(DS_PORT |= (1<<DS_CTL))
@@ -250,10 +252,15 @@ void main(void) {
 	sei();
 	lcd_init();
 	i=0;
+	i = eeprom_read_byte(&em);
 	lcd_write_str_p(dsmessage);
+	lcd_write(' ',1,0);
+	lcd_write('0'+i,1,0);
 	
 	if (ds_init()) {
 		roms = ds_search_rom();
+		eeprom_busy_wait();
+		eeprom_write_byte(&em, roms);	
 		temp = hex2ascii(roms);
                 lcd_write((uint8_t)(temp>>16),1,0);
                 lcd_write((uint8_t)(temp>>8),1,0);

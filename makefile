@@ -9,7 +9,7 @@ SOURCES=termometr.c
 OBJECTS=$(SOURCES:%.c=%.o)
 
 $(TARGET).hex : $(TARGET).o
-	$(OBJ2HEX) -O ihex $(TARGET).o $(TARGET).hex
+	$(OBJ2HEX) -R .eeprom -O ihex $(TARGET).o $(TARGET).hex
 
 $(TARGET).o : $(SOURCES)
 	$(CC) $(CFLAGS) -o $(TARGET).o $(SOURCES)
