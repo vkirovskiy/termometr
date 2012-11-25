@@ -319,11 +319,6 @@ void main(void) {
                 	lcd_write('.', 1,0);
 			temp = hex2ascii(mantiss);
 			lcd_write((uint8_t)(temp>>16),1,0);
-			lcd_write('[',1,0);
-			temp = hex2ascii(dstemp[6]);
-			lcd_write((uint8_t)(temp>>8), 1,0);
-			lcd_write((uint8_t)(temp), 1,0);
-			lcd_write(']',1,0);
                 	lcd_write(' ', 1,0);
 			intc = 0;
 			h++;
