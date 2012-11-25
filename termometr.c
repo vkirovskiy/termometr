@@ -284,29 +284,25 @@ void main(void) {
 			}
 			ds_write_byte(0xbe);
 			ds_read_scratch();
-			mantiss = 0;
 			if (!dstemp[1]) {
-                        	temp = hex2ascii(dstemp[0]>>1);
+				i = dstemp[0]>>1;
+				if (dstemp[6] & (1<<4)) {i--;}
                 	} else {
-				i = 0xFF-dstemp[0]+1;
-                        	temp = hex2ascii(i>>1);
+				i = (uint8_t)(~dstemp[0])>>1;
+				if (dstemp[6] & (1<<4)) {i++;}
                 	}
+			temp = hex2ascii((uint8_t)i);
 			if (!dstemp[1]) {
-				i = 0x10 - dstemp[6];	
+				i = ~dstemp[6] & 0x0F;	
 			} else {
 				i = dstemp[6];
 			}
+			mantiss = 0;
 			if (i & (1<<3)) { mantiss += 500; }
 			if (i & (1<<2)) { mantiss += 250; }
 			if (i & (1<<1)) { mantiss += 125; }
 			if (i & (1)) { mantiss += 62; }
-                	//i=0;
-			//lcd_write(0b11000000,0,0);
-                	//do {
-                        //	lcd_write(tmsg[i], 1,0);
-                        //	i++;
-                	//} while (i<4);
-			//lcd_write(' ',1,0);
+
 			if (h>1) { lcd_write(0b11000000,0,0); }
 			if (dstemp[1]) {
 				lcd_write('-', 1,0);
@@ -323,6 +319,11 @@ void main(void) {
                 	lcd_write('.', 1,0);
 			temp = hex2ascii(mantiss);
 			lcd_write((uint8_t)(temp>>16),1,0);
+			lcd_write('[',1,0);
+			temp = hex2ascii(dstemp[6]);
+			lcd_write((uint8_t)(temp>>8), 1,0);
+			lcd_write((uint8_t)(temp), 1,0);
+			lcd_write(']',1,0);
                 	lcd_write(' ', 1,0);
 			intc = 0;
 			h++;
