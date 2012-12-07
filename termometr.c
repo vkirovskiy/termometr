@@ -286,7 +286,18 @@ void main(void) {
 			ds_read_scratch();
 			if (!dstemp[1]) {
 				i = dstemp[0]>>1;
-				if (dstemp[6] & (1<<4)) {i--;}
+				if (dstemp[6] & (1<<4)) {
+					// flag 5 of dstemp[6] means that we need to decrease  
+					// the temperature variable(i)
+					// but if the value is zero, value will be 255, but we want -1
+					// so we set munis flag of dstemp[1] and just increase i
+					if (i==0) {
+						i++;
+						dstemp[1] = 1;
+					} else {
+						i--;
+					}
+				}
                 	} else {
 				i = (uint8_t)(~dstemp[0])>>1;
 				if (dstemp[6] & (1<<4)) {i++;}
