@@ -14,6 +14,11 @@ volatile unsigned char rom[3][8];
 volatile unsigned char dstemp[9];
 volatile unsigned char pa = 0;
 volatile unsigned char intc = 0;
+volatile char *str;
+volatile char str_b[20];
+
+#include "uart.c"
+
 char EEMEM em = 0;
 char dsmessage[] PROGMEM = "SENSORS ";
 
@@ -239,6 +244,8 @@ void main(void) {
 	uint16_t lcdbcd;
 	uint8_t roms = 0;
 	unsigned long temp;
+        char sind,sbyte;
+
 	
 	TIMSK |= (1<<OCIE1A);
 	TCCR1B = (1<<CS12)|(0<<CS11)|(1<<CS10)|(0<<WGM13)|(1<<WGM12);
@@ -250,6 +257,9 @@ void main(void) {
 	DDRA |= 0x0F;
 	PORTA &= 0xF0;
 	sei();
+	str = "Hello world\r\n"; 
+	uart_init();
+	uart_send_str();
 	lcd_init();
 	i=0;
 	i = eeprom_read_byte(&em);
@@ -276,6 +286,7 @@ void main(void) {
                     ds_write_byte(0x44);
                     _delay_ms(1000);
 		    lcd_write(0b00000001,0,0);
+		    sind = 0;
 		    do {
 			ds_init();
 			ds_write_byte(0x55);
@@ -320,20 +331,46 @@ void main(void) {
 			}
 			
 			if ((uint8_t)(temp>>16) > '0') { 
-			    lcd_write((uint8_t)(temp>>16),1,0); 
-			    lcd_write((uint8_t)(temp>>8),1,0);
+			    sbyte = (uint8_t)(temp>>16);
+			    lcd_write(sbyte,1,0); 
+			    str_b[sind] = sbyte;
+			    sind++;
+			    sbyte = (uint8_t)(temp>>8);
+			    lcd_write(sbyte,1,0);
+			    str_b[sind] = sbyte;  
+			    sind++;
 			} else if ((uint8_t)(temp>>8) > '0') {
-			    lcd_write((uint8_t)(temp>>8),1,0);
+			    sbyte = (uint8_t)(temp>>8);
+			    lcd_write(sbyte,1,0);
+			    str_b[sind] = sbyte;
+			    sind++;
 			}
-			lcd_write((uint8_t)temp,1,0); 
+			sbyte = (uint8_t)temp;
+			lcd_write(sbyte,1,0); 
+			str_b[sind] = sbyte;
+			sind++;
 			
                 	lcd_write('.', 1,0);
+			str_b[sind] = '.';
+			sind++;
 			temp = hex2ascii(mantiss);
-			lcd_write((uint8_t)(temp>>16),1,0);
+			sbyte = (uint8_t)(temp>>16);
+			lcd_write(sbyte,1,0);
+			str_b[sind] = sbyte;
                 	lcd_write(' ', 1,0);
-			intc = 0;
+			sind++;
 			h++;
+			if (h<roms) {
+			    str_b[sind] = ',';
+			    sind++;
+			}
+			intc = 0;
 		    } while (h<roms);
+		    str_b[sind] = 10;
+		    str_b[sind+1] = 13;
+		    str_b[sind+2] = 0;
+		    str = str_b;
+		    uart_send_str();
 		}
 	}
 
