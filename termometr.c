@@ -8,13 +8,15 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
+#include <string.h>
 #include "lcd.c"
 
 volatile unsigned char rom[3][8];
 volatile unsigned char dstemp[9];
 volatile unsigned char pa = 0;
 volatile unsigned char intc = 0;
-volatile char *str;
+volatile uartbuffer[32];
+volatile char* str;
 volatile char str_b[20];
 
 #include "uart.c"
@@ -239,7 +241,7 @@ ISR (TIMER1_COMPA_vect) {
 void main(void) {
 	cli();
 	unsigned char tmsg[4] = {'T','E','M','P'};
-	unsigned char i,h = 0;
+	unsigned char i,h,j = 0;
 	unsigned int mantiss = 0;
 	uint16_t lcdbcd;
 	uint8_t roms = 0;
@@ -257,9 +259,11 @@ void main(void) {
 	DDRA |= 0x0F;
 	PORTA &= 0xF0;
 	sei();
-	str = "Hello world\r\n"; 
+	
+	str = memset(&uartbuffer, 0, 320);
+	str = strcpy((char *)&uartbuffer, "Hello world\r\n");
 	uart_init();
-	uart_send_str();
+	uart_send_str((char *)&uartbuffer);
 	lcd_init();
 	i=0;
 	i = eeprom_read_byte(&em);
@@ -269,6 +273,19 @@ void main(void) {
 	
 	if (ds_init()) {
 		roms = ds_search_rom();
+		for (i=0; i<roms; i++) {
+		    memset(&uartbuffer, 0, 32);
+		    for (h=0; h<8; h++) {
+		    	temp = hex2bcd(rom[i][h]);
+			j = temp>>8;
+			uart_strncat(&j,1);	
+			j = temp;
+			uart_strncat(&j,1);	
+		    }
+		    uart_strncat("\r\n", 2);
+		    uart_send_str((char *)&uartbuffer);
+		    uart_txc_wait();
+		}
 		eeprom_busy_wait();
 		eeprom_write_byte(&em, roms);	
 		temp = hex2ascii(roms);
@@ -370,7 +387,7 @@ void main(void) {
 		    str_b[sind+1] = 13;
 		    str_b[sind+2] = 0;
 		    str = str_b;
-		    uart_send_str();
+		    uart_send_str(str);
 		}
 	}
 

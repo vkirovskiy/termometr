@@ -22,8 +22,19 @@ void uart_init () {
 	UCSRC = 1<<URSEL|1<<UCSZ0|1<<UCSZ1;
 }
 
-void uart_send_str () {
+void uart_send_str (char *string) {
+	str = string;
 	UDR = *str;
 	str++; 
-	UCSRB|=(1<<UDRIE);
+	UCSRA |= (1<<TXC);
+	UCSRB |= (1<<UDRIE);
+}
+
+void uart_strncat (const char *src, uint8_t size) {
+	strncat((char *)&uartbuffer, src, size); 
+}
+
+void uart_txc_wait() {
+	while (! (UCSRA & (1<<TXC))) {
+	}
 }
