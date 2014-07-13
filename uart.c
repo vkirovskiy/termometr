@@ -34,6 +34,10 @@ void uart_strncat (const char *src, uint8_t size) {
 	strncat((char *)&uartbuffer, src, size); 
 }
 
+void uart_strcpy (const char *src) {
+	strcpy((char *)&uartbuffer, src);
+}
+
 void uart_txc_wait() {
 	while (! (UCSRA & (1<<TXC))) {
 	}

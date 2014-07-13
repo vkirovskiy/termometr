@@ -260,8 +260,7 @@ void main(void) {
 	PORTA &= 0xF0;
 	sei();
 	
-	str = memset(&uartbuffer, 0, 320);
-	str = strcpy((char *)&uartbuffer, "Hello world\r\n");
+	uart_strcpy("Hello world\r\n");
 	uart_init();
 	uart_send_str((char *)&uartbuffer);
 	lcd_init();
