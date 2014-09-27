@@ -303,6 +303,7 @@ void main(void) {
                     _delay_ms(1000);
 		    lcd_write(0b00000001,0,0);
 		    sind = 0;
+		    memset(&uartbuffer, 0, 32);
 		    do {
 			ds_init();
 			ds_write_byte(0x55);
@@ -349,44 +350,34 @@ void main(void) {
 			if ((uint8_t)(temp>>16) > '0') { 
 			    sbyte = (uint8_t)(temp>>16);
 			    lcd_write(sbyte,1,0); 
-			    str_b[sind] = sbyte;
-			    sind++;
+			    uart_strncat(&sbyte, 1);
 			    sbyte = (uint8_t)(temp>>8);
 			    lcd_write(sbyte,1,0);
-			    str_b[sind] = sbyte;  
-			    sind++;
+			    uart_strncat(&sbyte, 1);
 			} else if ((uint8_t)(temp>>8) > '0') {
 			    sbyte = (uint8_t)(temp>>8);
 			    lcd_write(sbyte,1,0);
-			    str_b[sind] = sbyte;
-			    sind++;
+			    uart_strncat(&sbyte, 1);
 			}
 			sbyte = (uint8_t)temp;
 			lcd_write(sbyte,1,0); 
-			str_b[sind] = sbyte;
-			sind++;
+			uart_strncat(&sbyte, 1);
 			
                 	lcd_write('.', 1,0);
-			str_b[sind] = '.';
-			sind++;
+			uart_strncat(".",1);
 			temp = hex2ascii(mantiss);
 			sbyte = (uint8_t)(temp>>16);
 			lcd_write(sbyte,1,0);
-			str_b[sind] = sbyte;
                 	lcd_write(' ', 1,0);
-			sind++;
+			uart_strncat(&sbyte, 1);
 			h++;
 			if (h<roms) {
-			    str_b[sind] = ',';
-			    sind++;
+			    uart_strncat(",",1);
 			}
 			intc = 0;
 		    } while (h<roms);
-		    str_b[sind] = 10;
-		    str_b[sind+1] = 13;
-		    str_b[sind+2] = 0;
-		    str = str_b;
-		    uart_send_str(str);
+		    uart_strncat("\r\n",2);
+		    uart_send_str((char *)&uartbuffer);
 		}
 	}
 
