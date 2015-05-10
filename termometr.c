@@ -9,6 +9,7 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 #include <string.h>
+#include "strings.c"
 #include "lcd.c"
 #include "ds1820.c"
 
@@ -26,41 +27,6 @@ char EEMEM em = 0;
 const char dsmessage[] PROGMEM = "Searching roms..";
 const char romfound[] PROGMEM = "Found: ";
 
-unsigned long hex2ascii(unsigned int n) {
-	uint8_t t1,t2,t3;
-	t1 = '0';
-	t2 = '0';
-	t3 = '0';
-	while (n>=100) {
-		t1++;
-		n-=100;
-	}
-	while (n>=10) {
-		t2++;
-		n-=10;
-	}
-	t3 += (n & 0xFF);
-	return (((unsigned long)t1)<<16) | (((unsigned long)t2)<<8) | (unsigned long)t3;
-}
-
-uint16_t hex2bcd(uint8_t n) {
-	uint8_t bcd[2];
-	bcd[0] = n & 0x0F;
-	bcd[1] = (n & 0xF0)>>4;
-	if (bcd[0]<10) {
-		bcd[0]+='0';
-	} else {
-		bcd[0] = 'A' + (bcd[0]-10);
-	}
-	if (bcd[1]<10) {
-                bcd[1]+='0';
-        } else {
-                bcd[1] = 'A' + (bcd[1]-10);
-        }
-
-	return (bcd[0]<<8) | bcd[1];
-				
-}
 
 ISR (TIMER1_COMPA_vect) {
 	unsigned char p;
@@ -101,10 +67,10 @@ void main(void) {
 	lcd_write_str_p(dsmessage);
 	//lcd_write(' ',1,0);
 	//lcd_write('0'+i,1,0);
-	lcd_write(0b11000000,0,0);
 	
 	if (ds_init()) {
 		roms = ds_search_rom((uint8_t *)&rom);
+		lcd_second_line();
 		lcd_write_str_p(romfound);
 	
 		for (i=0; i<roms; i++) {
@@ -136,7 +102,7 @@ void main(void) {
 		    ds_write_byte(0xcc);
                     ds_write_byte(0x44);
                     _delay_ms(1000);
-		    lcd_write(0b00000001,0,0);
+		    lcd_clr();
 		    sind = 0;
 		    memset(&uartbuffer, 0, 32);
 		    do {
@@ -177,7 +143,7 @@ void main(void) {
 			if (i & (1<<1)) { mantiss += 125; }
 			if (i & (1)) { mantiss += 62; }
 
-			if (h>1) { lcd_write(0b11000000,0,0); }
+			if (h>1) { lcd_second_line(); }
 			if (dstemp[1]) {
 				lcd_write('-', 1,0);
 				uart_strncat("-",1);

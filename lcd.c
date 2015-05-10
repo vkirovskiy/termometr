@@ -106,4 +106,5 @@ void lcd_init() {
 #define lcd_shift_r() (lcd_write(0b00011000,0,0))
 #define lcd_shift_l() (lcd_write(0b00011100,0,0))
 #define lcd_clr() (lcd_write((1<<LCD_CLR),0, 0))
+#define lcd_second_line() (lcd_write(0b11000000,0,0))
 
