@@ -58,20 +58,25 @@ void main(void) {
 	PORTA &= 0xF0;
 	sei();
 	
-	uart_strcpy("Hello world\r\n");
+	memset(&uartbuffer, 0, 32);
+	uart_strcpy("Rom found: ");
 	uart_init();
-	uart_send_str((char *)&uartbuffer);
 	lcd_init();
 	i=0;
 	i = eeprom_read_byte(&em);
 	lcd_write_str_p(dsmessage);
-	//lcd_write(' ',1,0);
-	//lcd_write('0'+i,1,0);
+	uart_send_str((char *)&uartbuffer);
+	uart_txc_wait();
 	
 	if (ds_init()) {
 		roms = ds_search_rom((uint8_t *)&rom);
 		lcd_second_line();
 		lcd_write_str_p(romfound);
+		memset(&uartbuffer, 0, 32);
+		uart_print_int((unsigned int)roms);
+		uart_strncat("\r\n", 2);
+		uart_send_str((char *)&uartbuffer);
+		uart_txc_wait();
 	
 		for (i=0; i<roms; i++) {
 		    memset(&uartbuffer, 0, 32);
@@ -86,12 +91,8 @@ void main(void) {
 		    uart_send_str((char *)&uartbuffer);
 		    uart_txc_wait();
 		}
-		//eeprom_busy_wait();
-		//eeprom_write_byte(&em, roms);	
-		temp = hex2ascii(roms);
-                lcd_write((uint8_t)(temp>>16),1,0);
-                lcd_write((uint8_t)(temp>>8),1,0);
-                lcd_write((uint8_t)temp & 0xFF,1,0);
+
+		lcd_print_int(roms);
 	}
 	_delay_ms(2000);
 
@@ -105,6 +106,8 @@ void main(void) {
 		    lcd_clr();
 		    sind = 0;
 		    memset(&uartbuffer, 0, 32);
+		    uart_strncat("> ", 2);
+
 		    do {
 			ds_init();
 			ds_write_byte(0x55);
@@ -131,7 +134,8 @@ void main(void) {
 				i = (uint8_t)(~dstemp[0])>>1;
 				if (dstemp[6] & (1<<4)) {i++;}
                 	}
-			temp = hex2ascii((uint8_t)i);
+			//temp = hex2ascii((uint8_t)i);
+			temp = (uint8_t)i;
 			if (!dstemp[1]) {
 				i = ~dstemp[6] & 0x0F;	
 			} else {
@@ -148,22 +152,9 @@ void main(void) {
 				lcd_write('-', 1,0);
 				uart_strncat("-",1);
 			}
-			
-			if ((uint8_t)(temp>>16) > '0') { 
-			    sbyte = (uint8_t)(temp>>16);
-			    lcd_write(sbyte,1,0); 
-			    uart_strncat(&sbyte, 1);
-			    sbyte = (uint8_t)(temp>>8);
-			    lcd_write(sbyte,1,0);
-			    uart_strncat(&sbyte, 1);
-			} else if ((uint8_t)(temp>>8) > '0') {
-			    sbyte = (uint8_t)(temp>>8);
-			    lcd_write(sbyte,1,0);
-			    uart_strncat(&sbyte, 1);
-			}
-			sbyte = (uint8_t)temp;
-			lcd_write(sbyte,1,0); 
-			uart_strncat(&sbyte, 1);
+
+			lcd_print_int(temp);
+			uart_print_int(temp);
 			
                 	lcd_write('.', 1,0);
 			uart_strncat(".",1);

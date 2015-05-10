@@ -22,7 +22,13 @@ void uart_init () {
 	UCSRC = 1<<URSEL|1<<UCSZ0|1<<UCSZ1;
 }
 
+void uart_txc_wait() {
+        while (! (UCSRA & (1<<TXC))) {
+        }
+}
+
 void uart_send_str (char *string) {
+
 	str = string;
 	UDR = *str;
 	str++; 
@@ -34,11 +40,25 @@ void uart_strncat (const char *src, uint8_t size) {
 	strncat((char *)&uartbuffer, src, size); 
 }
 
-void uart_strcpy (const char *src) {
+void uart_strcpy (char *src) {
 	strcpy((char *)&uartbuffer, src);
 }
 
-void uart_txc_wait() {
-	while (! (UCSRA & (1<<TXC))) {
+void uart_print_int(unsigned int n) {
+	unsigned long m;
+        m = hex2ascii(n);
+	uint8_t sbyte;
+
+	if ((uint8_t)(m>>16) > '0') {
+		sbyte = (uint8_t)(m>>16);
+		uart_strncat(&sbyte, 1);
+		sbyte = (uint8_t)(m>>8);
+		uart_strncat(&sbyte, 1);
+	} else if ((uint8_t)(m>>8) > '0') {
+		sbyte = (uint8_t)(m>>8);
+		uart_strncat(&sbyte, 1);
 	}
+	
+	sbyte = (uint8_t)m;	
+	uart_strncat(&sbyte, 1);
 }
