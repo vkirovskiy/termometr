@@ -16,3 +16,11 @@ The next functions are implemented:
 - text output to LCD display based on HD44780 chip
 - text output to UART (output only)
 
+# Flash
+
+It uses avrdude to flash controller
+
+# Compiling
+
+make
+make flash
