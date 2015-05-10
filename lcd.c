@@ -81,6 +81,13 @@ void lcd_write(unsigned char c, unsigned char rs, unsigned char fb) {			//rs: 0 
 		
 }
 
+void lcd_write_str_p(const char *string) {
+        while (pgm_read_byte(string)!='\0') {
+            lcd_write(pgm_read_byte(string), 1,0 );
+            string++;
+        }
+}
+
 void lcd_init() {
 	unsigned int lcdwait = 65535;
 	init_ports();
