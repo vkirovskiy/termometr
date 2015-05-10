@@ -1,7 +1,7 @@
 termometr
 =========
 
-=Main=
+# Main
 
 This is a demo firmware for Atmel AVR ATMega16 for working with DS1820 termometr sensor.
 
