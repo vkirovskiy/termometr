@@ -23,4 +23,5 @@ It uses avrdude to flash controller
 # Compiling
 
 make
+
 make flash
