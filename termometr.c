@@ -1,12 +1,8 @@
+#include <avr/pgmspace.h>
 #include "variables.c"
-#define DS_PORT		PORTA
-#define DS_DDR		DDRA
-#define DS_PIN		PINA
-#define DS_CTL		5
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 #include <string.h>
 #include "strings.c"
@@ -17,16 +13,13 @@ volatile uint8_t rom[3][8];
 uint8_t dstemp[9];
 volatile unsigned char pa = 0;
 volatile unsigned char intc = 0;
-volatile uartbuffer[32];
+volatile char uartbuffer[32];
 volatile char* str;
 volatile char str_b[20];
 
 #include "uart.c"
 
 char EEMEM em = 0;
-const char dsmessage[] PROGMEM = "Searching roms..";
-const char romfound[] PROGMEM = "Found: ";
-
 
 ISR (TIMER1_COMPA_vect) {
 	unsigned char p;
@@ -159,7 +152,7 @@ void main(void) {
                 	lcd_write('.', 1,0);
 			uart_strncat(".",1);
 			temp = hex2ascii(mantiss);
-			sbyte = (uint8_t)(temp>>16);
+			sbyte = (uint8_t)temp;
 			lcd_write(sbyte,1,0);
                 	lcd_write(' ', 1,0);
 			uart_strncat(&sbyte, 1);
