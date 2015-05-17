@@ -142,16 +142,13 @@ unsigned char ds_search_rom(uint8_t *rom) {
                         rombit = 0;
                     } else {
 			rombit = *(rom+(romind-1)*8+rombyte) & (1<<cnt) > 0;
-                        //rombit = rom[romind-1][rombyte] & (1<<cnt) > 0;
                     }
                     if (!rombit) { last_zero = rombit_index; }
                 }
                 if (rombit) {
 		    *(rom+romind*8+rombyte) |= (1<<cnt);
-                    //rom[romind][rombyte] |= (1<<cnt);
                 } else {
 		    *(rom+romind*8+rombyte) &= ~(1<<cnt);
-                    //rom[romind][rombyte] &= ~(1<<cnt);
                 }
                 ds_write_bit(rombit);
                 if (cnt<7) {
