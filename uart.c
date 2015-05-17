@@ -49,16 +49,12 @@ void uart_print_int(unsigned int n) {
         m = hex2ascii(n);
 	uint8_t sbyte;
 
-	if ((uint8_t)(m>>16) > '0') {
-		sbyte = (uint8_t)(m>>16);
-		uart_strncat(&sbyte, 1);
-		sbyte = (uint8_t)(m>>8);
-		uart_strncat(&sbyte, 1);
+	if ((uint8_t)m > '0') {
+		uart_strncat((char *)&m, 2);
 	} else if ((uint8_t)(m>>8) > '0') {
-		sbyte = (uint8_t)(m>>8);
-		uart_strncat(&sbyte, 1);
+		uart_strncat((char *)&m+1, 1);
 	}
 	
-	sbyte = (uint8_t)m;	
-	uart_strncat(&sbyte, 1);
+	//sbyte = (uint8_t)m;	
+	uart_strncat((char *)&m+2, 1);
 }
