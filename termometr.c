@@ -93,8 +93,8 @@ void main(void) {
 		if (intc) {
 		    h = 0;
 		    ds_init();
-		    ds_write_byte(0xcc);
-                    ds_write_byte(0x44);
+		    ds_write_byte(DS_SKIP_ROM);
+                    ds_write_byte(DS_DO_CONVERT);
                     _delay_ms(1000);
 		    lcd_clr();
 		    sind = 0;
@@ -103,7 +103,7 @@ void main(void) {
 
 		    do {
 			ds_init();
-			ds_write_byte(0x55);
+			ds_write_byte(DS_MATCH_ROM);
 			for (i=0; i<8; i++) {
 			    ds_write_byte(rom[h][i]);
 			}
