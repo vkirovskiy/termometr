@@ -12,7 +12,7 @@ unsigned long hex2ascii(unsigned int n) {
                 n-=10;
         }
         t3 += (n & 0xFF);
-        return (((unsigned long)t1)<<16) | (((unsigned long)t2)<<8) | (unsigned long)t3;
+        return (((unsigned long)t3)<<16) | (((unsigned long)t2)<<8) | (unsigned long)t1;
 }
 
 uint16_t hex2bcd(uint8_t n) {
