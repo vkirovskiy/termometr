@@ -1,5 +1,8 @@
 #define ds_pin_up()     (DS_PORT |= (1<<DS_CTL))
 #define ds_pin_down()   (DS_PORT &= ~(1<<DS_CTL))
+#define DS_DO_CONVERT		0x44
+#define DS_MATCH_ROM		0x55
+#define DS_SKIP_ROM		0xCC	
 
 void ds_port_in(void) {
         DS_DDR &= ~(1<<DS_CTL);
