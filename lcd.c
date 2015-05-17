@@ -113,12 +113,12 @@ void lcd_print_int(unsigned int n) {
 	uint8_t k;
 	m = hex2ascii(n);
 	
-	if ((uint8_t)(m>>16) > '0') {
-		lcd_write((uint8_t)(m>>16),1,0); 
+	if ((uint8_t)m > '0') {
+		lcd_write((uint8_t)m,1,0); 
 		lcd_write((uint8_t)(m>>8),1,0);
 	} else if ((uint8_t)(m>>8) > '0') { 
 		lcd_write((uint8_t)(m>>8),1,0);
 	}
-	lcd_write((uint8_t)m,1,0);
+	lcd_write((uint8_t)(m>>16),1,0);
 }
 
