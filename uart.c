@@ -58,3 +58,11 @@ void uart_print_int(unsigned int n) {
 	//sbyte = (uint8_t)m;	
 	uart_strncat((char *)&m+2, 1);
 }
+
+void uart_print_hex(uint8_t b) {
+	unsigned int m;
+	m = hex2bcd(b);
+	
+	uart_strncat((char *)&m+1, 1);
+	uart_strncat((char *)&m, 1); 
+}
