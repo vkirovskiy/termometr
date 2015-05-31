@@ -74,11 +74,7 @@ void main(void) {
 		for (i=0; i<roms; i++) {
 		    memset(&uartbuffer, 0, 32);
 		    for (h=0; h<8; h++) {
-		    	temp = hex2bcd(rom[i][h]);
-			j = temp>>8;
-			uart_strncat(&j,1);	
-			j = temp;
-			uart_strncat(&j,1);	
+			uart_print_hex(rom[i][h]);
 		    }
 		    uart_strncat("\r\n", 2);
 		    uart_send_str((char *)&uartbuffer);
@@ -98,8 +94,6 @@ void main(void) {
                     _delay_ms(1000);
 		    lcd_clr();
 		    sind = 0;
-		    memset(&uartbuffer, 0, 32);
-		    uart_strncat("> ", 2);
 
 		    do {
 			ds_init();
@@ -109,6 +103,16 @@ void main(void) {
 			}
 			ds_write_byte(0xbe);
 			ds_read_scratch(dstemp);
+			
+			memset(&uartbuffer, 0, 32);
+                        uart_strncat("> ", 2);
+
+			for (i=0; i<8; i++) {
+			    uart_print_hex(rom[h][i]);
+			}	
+	
+			uart_strncat(" ", 1);
+	
 			if (!dstemp[1]) {
 				i = dstemp[0]>>1;
 				if (dstemp[6] & (1<<4)) {
@@ -157,13 +161,12 @@ void main(void) {
                 	lcd_write(' ', 1,0);
 			uart_strncat(&sbyte, 1);
 			h++;
-			if (h<roms) {
-			    uart_strncat(",",1);
-			}
+			uart_strncat("\r\n", 2);
+			uart_send_str((char *)&uartbuffer);
+			uart_txc_wait();
+			
 			intc = 0;
 		    } while (h<roms);
-		    uart_strncat("\r\n",2);
-		    uart_send_str((char *)&uartbuffer);
 		}
 	}
 
